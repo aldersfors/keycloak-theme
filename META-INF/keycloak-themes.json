@@ -1,0 +1,8 @@
+{
+  "themes": [
+    {
+      "name": "halsingland",
+      "types": ["common", "login", "account", "admin", "email"]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+# release-please keeps a release PR open on main. Merging it tags the version and creates
+# the GitHub release; the same run then attaches the JAR and pushes the image.
+# Needs the secrets RELEASE_APP_CLIENT_ID and RELEASE_APP_PRIVATE_KEY (the release app).
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    # release-please acts through the release GitHub App, not GITHUB_TOKEN: GitHub holds CI
+    # on PRs opened with GITHUB_TOKEN until someone approves the run.
+    permissions: {}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    env:
+      IMAGE: ghcr.io/aldersfors/keycloak-theme
+      TAG: ${{ needs.release-please.outputs.tag_name }}
+      VERSION: ${{ needs.release-please.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+          persist-credentials: false
+      - run: make jar
+      - name: attach the JAR to the release
+        run: gh release upload "$TAG" dist/keycloak-theme-halsingland.jar --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: push the image (amd64 and arm64; the image has no platform-specific content)
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker buildx create --use --name release
+          docker buildx build -f Containerfile \
+            --platform linux/amd64,linux/arm64 \
+            --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
+            --label org.opencontainers.image.version="$VERSION" \
+            --label org.opencontainers.image.licenses=Apache-2.0 \
+            -t "$IMAGE:$VERSION" -t "$IMAGE:latest" --push .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
