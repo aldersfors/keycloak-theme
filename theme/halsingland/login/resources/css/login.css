@@ -119,16 +119,43 @@ body.hl-body,
   text-align: center;
 }
 
+/* A chevron so the pill reads as a control (appearance: none drops the native arrow). */
 .hl-lang select {
   appearance: none;
   border: 1px solid var(--hl-line);
   border-radius: 999px;
-  background: var(--hl-panel);
+  background-color: var(--hl-panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234f5f6f' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
   color: var(--hl-ink);
   font: inherit;
   font-size: 0.875rem;
-  padding: 6px 16px;
+  padding: 6px 36px 6px 16px;
   min-height: 36px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hl-lang select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a0aab4' stroke-width='1.6'/%3E%3C/svg%3E");
+  }
+}
+
+/* PatternFly declares its login band variables on .pf-v5-c-login, which this frame drops,
+   so give the identity-provider and register bands their spacing directly. */
+.hl-content .pf-v5-c-login__main-footer-band {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hl-line);
+  text-align: center;
+  color: var(--hl-muted);
+}
+
+.hl-content #kc-social-providers .pf-v5-c-login__main-body {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* --- Form controls: large touch targets, one full rounded border ---

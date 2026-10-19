@@ -156,3 +156,44 @@ def test_touch_targets(make_page, login_url):
     for field in ("#username", "#password"):
         assert box(page, field)["height"] >= 44, field
     assert box(page, "#kc-login")["height"] >= 48
+
+
+LIGHT_ATTENTION = "rgb(122, 95, 16)"
+DARK_ATTENTION = "rgb(232, 208, 128)"
+
+
+def test_social_providers_are_separated(make_page, login_url):
+    """The identity-provider band keeps its spacing without PatternFly's login wrapper."""
+    page = open_login(make_page, login_url)
+    shot(page, "login-social-light-390")
+    band = ".hl-content .pf-v5-c-login__main-footer-band"
+    assert page.locator("#social-example").is_visible()
+    assert box(page, band)["y"] >= box(page, "#kc-login")["y"] + box(page, "#kc-login")["height"] + 16
+    assert style(page, band, "padding-top") != "0px"
+    assert style(page, band, "border-top-width") != "0px"
+
+
+@pytest.mark.parametrize("scheme,attention", [("light", LIGHT_ATTENTION), ("dark", DARK_ATTENTION)])
+def test_update_password_page(make_page, scheme, attention):
+    """A required action: renders in the frame, fits 320px, and its warning alert uses the tokens."""
+    page = make_page({"width": 320, "height": 800}, scheme)
+    page.goto(f"{BASE}/realms/{REALM}/account/")
+    sign_in(page, "dave")
+    page.wait_for_selector("#password-new")
+    shot(page, f"login-update-password-{scheme}-320")
+    assert page.locator(".hl-header").count() == 1
+    assert no_overflow(page)
+    alert = ".hl-content .pf-v5-c-alert .kc-feedback-text"
+    assert style(page, alert, "color") == attention
+
+
+def test_otp_has_focus(make_page, login_url):
+    page = open_login(make_page, login_url)
+    sign_in(page, "alice")
+    page.wait_for_selector("#otp")
+    assert page.evaluate("document.activeElement && document.activeElement.id") == "otp"
+
+
+def test_language_switch_looks_like_a_control(make_page, login_url):
+    page = open_login(make_page, login_url)
+    assert style(page, ".hl-lang select", "background-image") != "none"

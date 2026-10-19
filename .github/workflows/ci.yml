@@ -22,14 +22,7 @@ jobs:
         with:
           persist-credentials: false
       - run: make test
-      - name: image builds and holds only the JAR
-        run: |
-          make image
-          id=$(docker create ghcr.io/aldersfors/keycloak-theme:dev)
-          files=$(docker export "$id" | tar -t | grep -v '/$')
-          docker rm "$id" >/dev/null
-          echo "$files"
-          test "$files" = "keycloak-theme-halsingland.jar"
+      - run: make test-image
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

@@ -77,3 +77,9 @@ def test_admin_console_styled(make_page, scheme):
     page = open_console(make_page, f"{BASE}/admin/{REALM}/console/", "admin", DESKTOP, scheme)
     shot(page, f"admin-{scheme}-1280")
     assert_styled(page, "/admin/halsingland/css/admin.css", scheme)
+
+
+def test_account_title_is_not_hardcoded(make_page):
+    """The spec forbids hardcoded realm names: the tab title must not be fixed by the theme."""
+    page = open_console(make_page, f"{BASE}/realms/{REALM}/account/", "alice", DESKTOP, "light", otp=True)
+    assert page.title() != "Homelab"

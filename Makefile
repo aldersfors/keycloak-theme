@@ -1,7 +1,7 @@
 JAR := dist/keycloak-theme-halsingland.jar
 COMPOSE := docker compose -f preview/compose.yaml
 
-.PHONY: jar image test test-jar test-e2e preview preview-down clean
+.PHONY: jar image test test-jar test-image test-e2e preview preview-down clean
 
 jar: $(JAR)
 
@@ -24,6 +24,10 @@ test: test-jar test-e2e
 
 test-jar: jar
 	bash test/jar_test.sh $(JAR)
+
+# The scratch image holds exactly the JAR.
+test-image: jar
+	bash test/image_test.sh
 
 # Restart Keycloak so it picks up the freshly built JAR, then run the browser tests.
 test-e2e: jar
