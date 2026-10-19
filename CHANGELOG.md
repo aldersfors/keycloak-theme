@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/aldersfors/keycloak-theme/compare/v1.0.0...v1.0.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* **ci:** attach release assets to a draft before publishing ([e7265ee](https://github.com/aldersfors/keycloak-theme/commit/e7265ee643e322e1b5e9d593d176b4a290e38c6c))
+
 ## 1.0.0 (2026-10-19)
 
 
