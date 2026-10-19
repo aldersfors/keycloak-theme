@@ -1,0 +1,60 @@
+/* Account and admin consoles: Keycloak's own React/PatternFly 5 apps. Only colours, fonts
+   and the masthead change; layout stays Keycloak's. The :root.pf-v5-theme-dark selector
+   outranks PatternFly's dark class so the tokens win in both schemes. */
+
+:root,
+:root.pf-v5-theme-dark {
+  --pf-v5-global--FontFamily--text: var(--hl-font-sans);
+  --pf-v5-global--FontFamily--heading: var(--hl-font-display);
+  --pf-v5-global--primary-color--100: var(--hl-primary);
+  --pf-v5-global--primary-color--200: color-mix(in srgb, var(--hl-primary) 82%, var(--hl-ink));
+  --pf-v5-global--link--Color: var(--hl-focus);
+  --pf-v5-global--link--Color--hover: var(--hl-ink);
+  --pf-v5-global--BackgroundColor--100: var(--hl-panel);
+  --pf-v5-global--BackgroundColor--200: var(--hl-page);
+  --pf-v5-global--BorderColor--100: var(--hl-line);
+  --pf-v5-global--danger-color--100: var(--hl-error);
+  --pf-v5-global--success-color--100: var(--hl-success);
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--hl-primary);
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--pf-v5-global--primary-color--200);
+  --pf-v5-c-button--m-primary--Color: var(--hl-primary-ink);
+  --pf-v5-c-button--m-primary--hover--Color: var(--hl-primary-ink);
+}
+
+body {
+  font-family: var(--hl-font-sans);
+}
+
+/* PatternFly sets these on the components (and again under its dark class), so the
+   global variables above do not reach them. */
+.pf-v5-c-button.pf-m-primary {
+  background-color: var(--hl-primary);
+  color: var(--hl-primary-ink);
+}
+
+.pf-v5-c-button.pf-m-primary:hover,
+.pf-v5-c-button.pf-m-primary:focus-visible {
+  background-color: color-mix(in srgb, var(--hl-primary) 82%, var(--hl-ink));
+  color: var(--hl-primary-ink);
+}
+
+:root.pf-v5-theme-dark .pf-v5-c-page__main-section {
+  background-color: var(--hl-page);
+}
+
+/* A navy brand bar with the gold logo in both schemes, like the email header. */
+.pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: #0d1b2a;
+  background-color: #0d1b2a;
+}
+
+.pf-v5-c-masthead .pf-v5-c-masthead__content,
+.pf-v5-c-masthead .pf-v5-c-toolbar {
+  --pf-v5-c-toolbar--BackgroundColor: transparent;
+  background-color: transparent;
+}
+
+.pf-v5-c-masthead img {
+  height: 36px;
+  width: auto;
+}

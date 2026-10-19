@@ -1,0 +1,5 @@
+/* Shared tokens and fonts. Keycloak builds url.resourcesCommonPath from the parent's
+   import (common/keycloak), so the common/halsingland files are reached by their stable
+   path instead: /resources/<version>/<type>/halsingland/css/ -> ../../../common/halsingland. */
+@import url("../../../common/halsingland/css/tokens.css");
+@import url("../../../common/halsingland/css/fonts.css");

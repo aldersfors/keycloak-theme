@@ -9,6 +9,7 @@ import hashlib
 import os
 import pathlib
 import secrets
+import time
 from urllib.parse import urlencode, urlparse
 
 import pyotp
@@ -35,7 +36,19 @@ def origin(url: str) -> str:
 
 
 def totp_now() -> str:
-    return pyotp.TOTP(base64.b32encode(ALICE_OTP_SECRET.encode()).decode()).now()
+    """A TOTP code for alice that has not been used yet. Keycloak rejects a code that was
+    already accepted in the same 30s window, so wait for the next one when needed. The last
+    code is kept in a file so back-to-back test runs (separate processes) also respect it."""
+    totp = pyotp.TOTP(base64.b32encode(ALICE_OTP_SECRET.encode()).decode())
+    last_file = OUT / ".last-otp"
+    last = last_file.read_text().strip() if last_file.exists() else None
+    code = totp.now()
+    while code == last:
+        time.sleep(1)
+        code = totp.now()
+    OUT.mkdir(parents=True, exist_ok=True)
+    last_file.write_text(code)
+    return code
 
 
 @pytest.fixture(scope="session")

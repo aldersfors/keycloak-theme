@@ -8,7 +8,10 @@
   "adminTheme": "halsingland",
   "emailTheme": "halsingland",
   "internationalizationEnabled": true,
-  "supportedLocales": ["sv", "en"],
+  "supportedLocales": [
+    "sv",
+    "en"
+  ],
   "defaultLocale": "sv",
   "resetPasswordAllowed": true,
   "rememberMe": true,
@@ -27,13 +30,20 @@
       "lastName": "Andersson",
       "enabled": true,
       "credentials": [
-        { "type": "password", "value": "Passw0rd!", "temporary": false },
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        },
         {
           "type": "otp",
           "userLabel": "Telefon",
           "secretData": "{\"value\":\"alicealicealicealice\"}",
           "credentialData": "{\"subType\":\"totp\",\"digits\":6,\"counter\":0,\"period\":30,\"algorithm\":\"HmacSHA1\"}"
         }
+      ],
+      "realmRoles": [
+        "default-roles-homelab"
       ]
     },
     {
@@ -43,7 +53,16 @@
       "firstName": "Bob",
       "lastName": "Berg",
       "enabled": true,
-      "credentials": [{ "type": "password", "value": "Passw0rd!", "temporary": false }]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-homelab"
+      ]
     },
     {
       "username": "admin",
@@ -52,8 +71,21 @@
       "firstName": "Admin",
       "lastName": "Homelab",
       "enabled": true,
-      "credentials": [{ "type": "password", "value": "Passw0rd!", "temporary": false }],
-      "clientRoles": { "realm-management": ["realm-admin"] }
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "realm-admin"
+        ]
+      },
+      "realmRoles": [
+        "default-roles-homelab"
+      ]
     }
   ]
 }
