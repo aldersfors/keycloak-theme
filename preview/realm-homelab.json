@@ -1,0 +1,59 @@
+{
+  "realm": "homelab",
+  "enabled": true,
+  "displayName": "Homelab",
+  "sslRequired": "none",
+  "loginTheme": "halsingland",
+  "accountTheme": "halsingland",
+  "adminTheme": "halsingland",
+  "emailTheme": "halsingland",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["sv", "en"],
+  "defaultLocale": "sv",
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "smtpServer": {
+    "host": "mailpit",
+    "port": "1025",
+    "from": "keycloak@homelab.test",
+    "fromDisplayName": "Homelab"
+  },
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@homelab.test",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Andersson",
+      "enabled": true,
+      "credentials": [
+        { "type": "password", "value": "Passw0rd!", "temporary": false },
+        {
+          "type": "otp",
+          "userLabel": "Telefon",
+          "secretData": "{\"value\":\"alicealicealicealice\"}",
+          "credentialData": "{\"subType\":\"totp\",\"digits\":6,\"counter\":0,\"period\":30,\"algorithm\":\"HmacSHA1\"}"
+        }
+      ]
+    },
+    {
+      "username": "bob",
+      "email": "bob@homelab.test",
+      "emailVerified": true,
+      "firstName": "Bob",
+      "lastName": "Berg",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Passw0rd!", "temporary": false }]
+    },
+    {
+      "username": "admin",
+      "email": "admin@homelab.test",
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Homelab",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Passw0rd!", "temporary": false }],
+      "clientRoles": { "realm-management": ["realm-admin"] }
+    }
+  ]
+}

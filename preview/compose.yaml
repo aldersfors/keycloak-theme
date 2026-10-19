@@ -1,0 +1,56 @@
+# Local preview: Keycloak with the theme JAR mounted, Mailpit to catch emails, and the
+# Playwright test runner (profile "tests", started by `make test`).
+name: keycloak-theme
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.3
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      # Serve template and CSS edits without a restart.
+      KC_SPI_THEME__CACHE_THEMES: "false"
+      KC_SPI_THEME__CACHE_TEMPLATES: "false"
+      KC_SPI_THEME__STATIC_MAX_AGE: "-1"
+    volumes:
+      - ../dist/keycloak-theme-halsingland.jar:/opt/keycloak/providers/keycloak-theme-halsingland.jar:ro
+      - ./realm-homelab.json:/opt/keycloak/data/import/realm-homelab.json:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+
+  mailpit:
+    image: docker.io/axllent/mailpit:v1.31.6
+    ports:
+      - "8025:8025"
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  tests:
+    image: mcr.microsoft.com/playwright/python:v1.63.0-noble
+    profiles: ["tests"]
+    working_dir: /work
+    environment:
+      KC_URL: http://keycloak:8080
+      MAILPIT_URL: http://mailpit:8025
+      TEST_OUT: /work/test/out
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      PIP_ROOT_USER_ACTION: ignore
+    volumes:
+      - ..:/work
+    command: ["sh", "-c", "pip install -q --break-system-packages -r test/e2e/requirements.txt && python -m pytest -q -p no:cacheprovider test/e2e"]
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
