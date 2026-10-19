@@ -1,0 +1,47 @@
+/* Colour tokens shared by every halsingland theme type. Light and dark are matlistan's
+   palette (aldersfors/matlistan web/styles/input.css); error and success are derived to
+   pass WCAG AA (4.5:1) against the page and their own backgrounds in both schemes. */
+:root {
+  color-scheme: light dark;
+  --hl-page: #eef2f6;
+  --hl-panel: #ffffff;
+  --hl-line: #d5dde6;
+  --hl-ink: #0d1b2a;
+  --hl-muted: #4f5f6f;
+  --hl-focus: #3a6582;
+  --hl-primary: #0d1b2a;
+  --hl-primary-ink: #ffffff;
+  --hl-attention: #f6edd2;
+  --hl-attention-text: #7a5f10;
+  --hl-gold: #7a5f10;
+  --hl-error: #a3242b;
+  --hl-error-bg: #fbe6e6;
+  --hl-success: #1d6a43;
+  --hl-success-bg: #e2f3e9;
+  --hl-logo: #0d1b2a;
+
+  --hl-font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --hl-font-display: "Bricolage Grotesque", "Geist", ui-sans-serif, sans-serif;
+  --hl-radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hl-page: #0d1b2a;
+    --hl-panel: #172433;
+    --hl-line: #25323f;
+    --hl-ink: #e8ecf0;
+    --hl-muted: #a0aab4;
+    --hl-focus: #6aa0b8;
+    --hl-primary: #6aa0b8;
+    --hl-primary-ink: #0d1b2a;
+    --hl-attention: #3a3520;
+    --hl-attention-text: #e8d080;
+    --hl-gold: #d8b85e;
+    --hl-error: #f0a0a0;
+    --hl-error-bg: #3b1e25;
+    --hl-success: #80d0a0;
+    --hl-success-bg: #16332a;
+    --hl-logo: #d8b85e;
+  }
+}
