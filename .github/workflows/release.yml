@@ -1,5 +1,6 @@
-# release-please keeps a release PR open on main. Merging it tags the version and creates
-# the GitHub release; the same run then attaches the JAR and pushes the image.
+# release-please keeps a release PR open on main. Merging it tags the version and creates a
+# draft release; the same run attaches the JAR, pushes the image and only then publishes the
+# release. Releases are immutable once published, so assets must be attached to the draft.
 # Needs the secrets RELEASE_APP_CLIENT_ID and RELEASE_APP_PRIVATE_KEY (the release app).
 name: release
 
@@ -55,7 +56,7 @@ jobs:
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
           persist-credentials: false
-      - run: make jar
+      - run: make test-jar
       - name: attach the JAR to the release
         run: gh release upload "$TAG" dist/keycloak-theme-halsingland.jar --clobber
         env:
@@ -67,8 +68,13 @@ jobs:
           docker buildx build -f Containerfile \
             --platform linux/amd64,linux/arm64 \
             --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
+            --annotation "index:org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
             --label org.opencontainers.image.version="$VERSION" \
             --label org.opencontainers.image.licenses=Apache-2.0 \
             -t "$IMAGE:$VERSION" -t "$IMAGE:latest" --push .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: publish the release
+        run: gh release edit "$TAG" --draft=false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
