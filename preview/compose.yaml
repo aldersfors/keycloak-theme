@@ -1,10 +1,13 @@
 # Local preview: Keycloak with the theme JAR mounted, Mailpit to catch emails, and the
 # Playwright test runner (profile "tests", started by `make test`).
+#
+# KEYCLOAK_VERSION picks the Keycloak to run. It defaults to the version production runs;
+# `make test-all` runs the suite against every version in the Makefile's KEYCLOAK_VERSIONS.
 name: keycloak-theme
 
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:26.5.3
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-26.5.3}
     command: ["start-dev", "--import-realm"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
@@ -43,7 +46,7 @@ services:
     environment:
       KC_URL: http://keycloak:8080
       MAILPIT_URL: http://mailpit:8025
-      TEST_OUT: /work/test/out
+      TEST_OUT: /work/test/out/${KEYCLOAK_VERSION:-26.5.3}
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
       PIP_ROOT_USER_ACTION: ignore
     volumes:

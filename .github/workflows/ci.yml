@@ -1,5 +1,6 @@
 # Builds the JAR and runs the browser tests against a real Keycloak on every pull request
-# and push to main. Screenshots of every page are kept as an artifact for review.
+# and push to main, once per Keycloak version the theme must work on. Screenshots of every
+# page are kept as an artifact per version for review.
 name: ci
 
 on:
@@ -17,6 +18,13 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Keep in step with KEYCLOAK_VERSIONS in the Makefile: production's version and the next.
+        keycloak: ["26.5.3", "26.8.1"]
+    env:
+      KEYCLOAK_VERSION: ${{ matrix.keycloak }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -26,8 +34,8 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: screenshots
-          path: test/out/
+          name: screenshots-${{ matrix.keycloak }}
+          path: test/out/${{ matrix.keycloak }}/
           if-no-files-found: ignore
       - if: always()
         run: make preview-down
