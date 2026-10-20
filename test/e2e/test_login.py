@@ -77,6 +77,13 @@ def test_header_shows_logo_and_realm(make_page, login_url):
     assert page.locator(".hl-header .hl-realm").inner_text().strip() == "Homelab"
 
 
+def test_tab_title_names_realm(make_page, login_url):
+    """The browser tab names the realm on every supported Keycloak. 26.8 hands the template a
+    ready-made title; older servers do not, so the template must fall back to loginTitle."""
+    page = open_login(make_page, login_url)
+    assert "Homelab" in page.title()
+
+
 def test_locale_switch(make_page, login_url):
     page = open_login(make_page, login_url)
     assert page.locator(".hl-title").inner_text().strip() == "Logga in"
