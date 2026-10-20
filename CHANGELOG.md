@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/aldersfors/keycloak-theme/compare/v1.0.1...v1.1.0) (2026-10-20)
+
+
+### Features
+
+* **login:** take the template head from Keycloak 26.8.1 ([2b4800a](https://github.com/aldersfors/keycloak-theme/commit/2b4800a1af9bb8e3ea81d2d0709e6d6f20e55ce5))
+
+
+### Bug Fixes
+
+* **login:** outline identity-provider buttons on Keycloak 26.8 ([6b56492](https://github.com/aldersfors/keycloak-theme/commit/6b56492caeb0cb8e44b9a0f8364fc45f01c53bb4))
+
 ## [1.0.1](https://github.com/aldersfors/keycloak-theme/compare/v1.0.0...v1.0.1) (2026-10-19)
 
 
