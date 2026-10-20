@@ -162,15 +162,31 @@ LIGHT_ATTENTION = "rgb(122, 95, 16)"
 DARK_ATTENTION = "rgb(232, 208, 128)"
 
 
-def test_social_providers_are_separated(make_page, login_url):
-    """The identity-provider band keeps its spacing without PatternFly's login wrapper."""
-    page = open_login(make_page, login_url)
-    shot(page, "login-social-light-390")
-    band = ".hl-content .pf-v5-c-login__main-footer-band"
+def separator_line(page, selector):
+    """Colour of the rule a separator draws: the footer band's top border (Keycloak 26.5) or
+    the named divider's ::before line (26.8), whichever the element has."""
+    return page.eval_on_selector(selector, """el => {
+        const own = getComputedStyle(el);
+        if (parseFloat(own.borderTopWidth) > 0) return own.borderTopColor;
+        const line = getComputedStyle(el, "::before");
+        return parseFloat(line.borderBottomWidth) > 0 ? line.borderBottomColor : "none";
+    }""")
+
+
+@pytest.mark.parametrize("scheme,line", [("light", "rgb(213, 221, 230)"), ("dark", "rgb(37, 50, 63)")])
+def test_social_providers_are_separated(make_page, login_url, scheme, line):
+    """The identity providers sit below the login button behind a rule in the theme's line
+    colour, and the provider button is outlined like the other secondary buttons. Keycloak 26.5
+    renders a footer band and a secondary button, 26.8 a named divider and a tertiary button."""
+    page = open_login(make_page, login_url, scheme=scheme)
+    shot(page, f"login-social-{scheme}-390")
+    separator = ".hl-content :is(.pf-v5-c-login__main-footer-band, .kc-login-divider)"
+    login = box(page, "#kc-login")
     assert page.locator("#social-example").is_visible()
-    assert box(page, band)["y"] >= box(page, "#kc-login")["y"] + box(page, "#kc-login")["height"] + 16
-    assert style(page, band, "padding-top") != "0px"
-    assert style(page, band, "border-top-width") != "0px"
+    assert box(page, separator)["y"] >= login["y"] + login["height"] + 16
+    assert separator_line(page, separator) == line
+    assert style(page, "#social-example", "border-top-width") == "1px"
+    assert style(page, "#social-example", "border-top-color") == line
 
 
 @pytest.mark.parametrize("scheme,attention", [("light", LIGHT_ATTENTION), ("dark", DARK_ATTENTION)])

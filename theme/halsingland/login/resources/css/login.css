@@ -152,6 +152,17 @@ body.hl-body,
   color: var(--hl-muted);
 }
 
+/* Keycloak 26.8 replaced the identity-provider band with a named divider ("or"). */
+.hl-content .kc-login-divider {
+  margin: 20px 0 0;
+  color: var(--hl-muted);
+}
+
+.hl-content .kc-login-divider::before,
+.hl-content .kc-login-divider::after {
+  border-bottom-color: var(--hl-line);
+}
+
 .hl-content #kc-social-providers .pf-v5-c-login__main-body {
   margin: 12px 0 0;
   padding: 0;
@@ -207,7 +218,10 @@ body.hl-body,
   color: var(--hl-primary-ink);
 }
 
-.hl-content .pf-v5-c-button.pf-m-secondary {
+/* Identity-provider buttons are secondary up to Keycloak 26.7 and tertiary from 26.8; both
+   draw their outline with the ::after hidden above, so give them the same border. */
+.hl-content .pf-v5-c-button.pf-m-secondary,
+.hl-content .pf-v5-c-button.pf-m-tertiary {
   border: 1px solid var(--hl-line);
   background: var(--hl-panel);
   color: var(--hl-ink);
